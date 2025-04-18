@@ -48,6 +48,24 @@ namespace BiblioAPI.Services
             return prestamos;
         }
 
+        public async Task RegistrarPrestamoAsync(PrestamoModel prestamo)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("RegistrarPrestamo", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@IdUsuario", prestamo.IdUsuario);
+                    cmd.Parameters.AddWithValue("@IdLibro", prestamo.IdLibro);
+                    cmd.Parameters.AddWithValue("@FechaDevolucionEsperada", prestamo.FechaDevolucionEsperada);
+                    cmd.Parameters.AddWithValue("@Estado", prestamo.Estado);
+
+                    await con.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
         public async Task<bool> ActualizarPrestamoAsync(int id, PrestamoModel prestamo)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))

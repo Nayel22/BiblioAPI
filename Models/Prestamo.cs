@@ -1,6 +1,6 @@
 ﻿namespace BiblioAPI.Models
 {
-    public class PrestamoModel
+    public class Prestamo
     {
         public int Id { get; set; }
         public int IdUsuario { get; set; }

@@ -13,9 +13,9 @@ namespace BiblioAPI.Services
             _connectionString = configuration.GetConnectionString("MiConexion");
         }
 
-        public async Task<List<UsuarioModel>> ObtenerUsuariosAsync()
+        public async Task<List<Usuario>> ObtenerUsuariosAsync()
         {
-            var usuarios = new List<UsuarioModel>();
+            var usuarios = new List<Usuario>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -28,7 +28,7 @@ namespace BiblioAPI.Services
                     {
                         while (await reader.ReadAsync())
                         {
-                            usuarios.Add(new UsuarioModel
+                            usuarios.Add(new Usuario
                             {
                                 Id = (int)reader["Id"],
                                 Nombre = reader["Nombre"].ToString(),
@@ -46,9 +46,9 @@ namespace BiblioAPI.Services
             return usuarios;
         }
 
-        public async Task<UsuarioModel> ObtenerUsuarioPorIdAsync(int id)
+        public async Task<Usuario> ObtenerUsuarioPorIdAsync(int id)
         {
-            UsuarioModel usuario = null;
+            Usuario usuario = null;
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -63,7 +63,7 @@ namespace BiblioAPI.Services
                         {
                             if ((int)reader["Id"] == id)
                             {
-                                usuario = new UsuarioModel
+                                usuario = new Usuario
                                 {
                                     Id = (int)reader["Id"],
                                     Nombre = reader["Nombre"].ToString(),
@@ -83,7 +83,7 @@ namespace BiblioAPI.Services
             return usuario;
         }
 
-        public async Task CrearUsuarioAsync(UsuarioModel usuario)
+        public async Task CrearUsuarioAsync(Usuario usuario)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -103,7 +103,7 @@ namespace BiblioAPI.Services
             }
         }
 
-        public async Task<bool> ActualizarUsuarioAsync(int id, UsuarioModel usuario)
+        public async Task<bool> ActualizarUsuarioAsync(int id, Usuario usuario)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -141,9 +141,9 @@ namespace BiblioAPI.Services
             }
         }
 
-        public async Task<UsuarioModel> ValidarUsuarioAsync(string correo, string clave)
+        public async Task<Usuario> ValidarUsuarioAsync(string correo, string clave)
         {
-            UsuarioModel usuario = null;
+            Usuario usuario = null;
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -158,7 +158,7 @@ namespace BiblioAPI.Services
                     {
                         if (await reader.ReadAsync())
                         {
-                            usuario = new UsuarioModel
+                            usuario = new Usuario
                             {
                                 Id = (int)reader["Id"],
                                 Nombre = reader["Nombre"].ToString(),

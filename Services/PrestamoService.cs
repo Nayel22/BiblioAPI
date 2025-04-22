@@ -13,9 +13,9 @@ namespace BiblioAPI.Services
             _connectionString = configuration.GetConnectionString("MiConexion");
         }
 
-        public async Task<List<PrestamoModel>> ObtenerPrestamosAsync()
+        public async Task<List<Prestamo>> ObtenerPrestamosAsync()
         {
-            var prestamos = new List<PrestamoModel>();
+            var prestamos = new List<Prestamo>();
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -28,7 +28,7 @@ namespace BiblioAPI.Services
                     {
                         while (await reader.ReadAsync())
                         {
-                            prestamos.Add(new PrestamoModel
+                            prestamos.Add(new Prestamo
                             {
                                 Id = (int)reader["Id"],
                                 IdUsuario = (int)reader["IdUsuario"],
@@ -44,7 +44,7 @@ namespace BiblioAPI.Services
 
             return prestamos;
         }
-        public async Task<bool> ActualizarPrestamoAsync(int id, PrestamoModel prestamo)
+        public async Task<bool> ActualizarPrestamoAsync(int id, Prestamo prestamo)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -62,7 +62,7 @@ namespace BiblioAPI.Services
             }
         } 
 
-        public async Task RegistrarPrestamoAsync(PrestamoModel prestamo)
+        public async Task RegistrarPrestamoAsync(Prestamo prestamo)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
             {

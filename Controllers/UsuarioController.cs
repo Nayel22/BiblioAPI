@@ -17,14 +17,14 @@ namespace BiblioAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UsuarioModel>>> ObtenerUsuarios()
+        public async Task<ActionResult<List<Usuario>>> ObtenerUsuarios()
         {
             var usuarios = await _usuarioService.ObtenerUsuariosAsync();
             return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UsuarioModel>> ObtenerUsuarioPorId(int id)
+        public async Task<ActionResult<Usuario>> ObtenerUsuarioPorId(int id)
         {
             var usuario = await _usuarioService.ObtenerUsuarioPorIdAsync(id);
             if (usuario == null)
@@ -35,14 +35,14 @@ namespace BiblioAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CrearUsuario([FromBody] UsuarioModel usuario)
+        public async Task<ActionResult> CrearUsuario([FromBody] Usuario usuario)
         {
             await _usuarioService.CrearUsuarioAsync(usuario);
             return CreatedAtAction(nameof(ObtenerUsuarioPorId), new { id = usuario.Id }, usuario);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> ActualizarUsuario(int id, [FromBody] UsuarioModel usuario)
+        public async Task<ActionResult> ActualizarUsuario(int id, [FromBody] Usuario usuario)
         {
             var actualizado = await _usuarioService.ActualizarUsuarioAsync(id, usuario);
             if (!actualizado)
@@ -64,7 +64,7 @@ namespace BiblioAPI.Controllers
         }
 
         [HttpPost("validar")]
-        public async Task<ActionResult<UsuarioModel>> ValidarUsuario([FromQuery] string correo, [FromQuery] string clave)
+        public async Task<ActionResult<Usuario>> ValidarUsuario([FromQuery] string correo, [FromQuery] string clave)
         {
             var usuario = await _usuarioService.ValidarUsuarioAsync(correo, clave);
             if (usuario == null)

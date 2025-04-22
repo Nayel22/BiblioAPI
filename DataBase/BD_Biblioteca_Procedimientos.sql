@@ -1,6 +1,4 @@
 
-
--- InsertarLibro (incluye ahora ImagenURL)
 CREATE PROCEDURE InsertarLibro
     @Titulo     NVARCHAR(100),
     @Autor      NVARCHAR(100),
@@ -17,7 +15,6 @@ VALUES (@Titulo, @Autor, @Editorial, @ISBN, @Anio, @Categoria, @Existencias, @Im
 END;
 GO
 
--- ObtenerLibros (sin cambios)
 CREATE PROCEDURE ObtenerLibros
     AS
 BEGIN
@@ -25,7 +22,6 @@ SELECT * FROM Libros;
 END;
 GO
 
--- ActualizarLibro (incluye ahora ImagenURL)
 CREATE PROCEDURE ActualizarLibro
     @Id          INT,
     @Titulo      NVARCHAR(100),
@@ -51,7 +47,7 @@ WHERE Id = @Id;
 END;
 GO
 
--- EliminarLibro (sin cambios)
+
 CREATE PROCEDURE EliminarLibro
     @Id INT
 AS
@@ -59,10 +55,6 @@ BEGIN
 DELETE FROM Libros WHERE Id = @Id;
 END;
 GO
-
---------------------------------------------------------------------------------
--- PROCEDIMIENTOS ALMACENADOS PARA USUARIOS (sin cambios)
---------------------------------------------------------------------------------
 
 CREATE PROCEDURE InsertarUsuario
     @Nombre     NVARCHAR(50),
@@ -124,9 +116,6 @@ WHERE Correo = @Correo AND Clave = @Clave;
 END;
 GO
 
---------------------------------------------------------------------------------
--- PROCEDIMIENTOS ALMACENADOS PARA PRÉSTAMOS (sin cambios)
---------------------------------------------------------------------------------
 
 CREATE PROCEDURE RegistrarPrestamo
     @IdUsuario                INT,
@@ -138,7 +127,7 @@ BEGIN
 INSERT INTO Prestamos (IdUsuario, IdLibro, FechaDevolucionEsperada, Estado)
 VALUES (@IdUsuario, @IdLibro, @FechaDevolucionEsperada, @Estado);
 
--- Actualizar existencias del libro
+
 UPDATE Libros
 SET Existencias = Existencias - 1
 WHERE Id = @IdLibro;

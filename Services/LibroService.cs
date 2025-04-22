@@ -37,7 +37,8 @@ namespace BiblioAPI.Services
                                 ISBN = reader["ISBN"].ToString(),
                                 Anio = (int)reader["Anio"],
                                 Categoria = reader["Categoria"].ToString(),
-                                Existencias = (int)reader["Existencias"]
+                                Existencias = (int)reader["Existencias"],
+                                ImagenURL = reader["ImagenURL"].ToString(),
                             });
                         }
                     }
@@ -73,7 +74,8 @@ namespace BiblioAPI.Services
                                     ISBN = reader["ISBN"].ToString(),
                                     Anio = (int)reader["Anio"],
                                     Categoria = reader["Categoria"].ToString(),
-                                    Existencias = (int)reader["Existencias"]
+                                    Existencias = (int)reader["Existencias"],
+                                    ImagenURL = reader["ImagenURL"].ToString(),
                                 };
                                 break;
                             }
@@ -99,6 +101,8 @@ namespace BiblioAPI.Services
                     cmd.Parameters.AddWithValue("@Anio", libro.Anio);
                     cmd.Parameters.AddWithValue("@Categoria", libro.Categoria);
                     cmd.Parameters.AddWithValue("@Existencias", libro.Existencias);
+                    cmd.Parameters.AddWithValue("@ImagenURL", libro.Existencias);
+               
 
                     await con.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
@@ -121,6 +125,7 @@ namespace BiblioAPI.Services
                     cmd.Parameters.AddWithValue("@Anio", libro.Anio);
                     cmd.Parameters.AddWithValue("@Categoria", libro.Categoria);
                     cmd.Parameters.AddWithValue("@Existencias", libro.Existencias);
+                    cmd.Parameters.AddWithValue("@ImagenURL", libro.Existencias);
 
                     await con.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();

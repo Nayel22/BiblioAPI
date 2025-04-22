@@ -1,4 +1,6 @@
-﻿namespace BiblioAPI.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BiblioAPI.Models
 {
     public class LibroModel
     { 
@@ -8,7 +10,10 @@
         public string Editorial { get; set; }
         public string ISBN { get; set; }
         public int Anio { get; set; }
-        public string Categoria { get; set; }
         public int Existencias { get; set; }
+        public string Categoria { get; set; }
+        
+
+        public string ImagenURL { get; set; }
     }
 }

@@ -34,12 +34,28 @@ namespace BiblioAPI.Controllers
             return Ok(usuario);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> CrearUsuario([FromBody] Usuario usuario)
+        [HttpPost("registrar")]
+        public async Task<ActionResult> RegistrarUsuario([FromBody] Usuario usuario)
         {
-            await _usuarioService.CrearUsuarioAsync(usuario);
-            return CreatedAtAction(nameof(ObtenerUsuarioPorId), new { id = usuario.Id }, usuario);
+            try
+            {
+                if (string.IsNullOrEmpty(usuario.Correo) || string.IsNullOrEmpty(usuario.Clave))
+                    return BadRequest("Correo y clave son requeridos");
+
+                await _usuarioService.CrearUsuarioAsync(usuario);
+                return Ok(new { Id = usuario.Id, Mensaje = "Registro exitoso" });
+            }
+            catch (SqlException ex) when (ex.Number == 2627)
+            {
+                return Conflict("El correo ya está registrado");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
         }
+        
+        
 
         [HttpPut("{id}")]
         public async Task<ActionResult> ActualizarUsuario(int id, [FromBody] Usuario usuario)

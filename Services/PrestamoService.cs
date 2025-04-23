@@ -44,6 +44,7 @@ namespace BiblioAPI.Services
 
             return prestamos;
         }
+        
         public async Task<bool> ActualizarPrestamoAsync(int id, Prestamo prestamo)
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
@@ -57,13 +58,30 @@ namespace BiblioAPI.Services
 
                     await con.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();
-                    return rows > 0; // true si se actualizó, false si no se encontró
+                    return rows > 0;
                 }
             }
         } 
+        
+        private async Task<int> ObtenerExistenciasLibroAsync(int idLibro)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT Existencias FROM Libros WHERE Id = @IdLibro", con);
+            cmd.Parameters.AddWithValue("@IdLibro", idLibro);
+
+            await con.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+            return (int)(result ?? 0);
+        }
 
         public async Task RegistrarPrestamoAsync(Prestamo prestamo)
         {
+            var existencias = await ObtenerExistenciasLibroAsync(prestamo.IdLibro);
+            if (existencias <= 0)
+            {
+                throw new InvalidOperationException("No hay existencias disponibles del libro.");
+            }
+
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
                 using (SqlCommand cmd = new SqlCommand("RegistrarPrestamo", con))
@@ -71,14 +89,19 @@ namespace BiblioAPI.Services
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@IdUsuario", prestamo.IdUsuario);
                     cmd.Parameters.AddWithValue("@IdLibro", prestamo.IdLibro);
+                    cmd.Parameters.AddWithValue("@FechaPrestamo", prestamo.FechaPrestamo);
                     cmd.Parameters.AddWithValue("@FechaDevolucionEsperada", prestamo.FechaDevolucionEsperada);
+                    cmd.Parameters.AddWithValue("@FechaDevolucionReal", (object?)prestamo.FechaDevolucionReal ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Estado", prestamo.Estado);
 
                     await con.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
                 }
             }
-        } 
+        }
+
+
+ 
 
         public async Task<bool> EliminarPrestamoAsync(int id)
         {

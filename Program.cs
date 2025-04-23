@@ -6,14 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// Configuración de CORS
+// Configuraciï¿½n de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
             builder.AllowAnyOrigin() // Permite cualquier origen
-                   .AllowAnyMethod() // Permite cualquier método (GET, POST, etc.)
+                   .AllowAnyMethod() // Permite cualquier mï¿½todo (GET, POST, etc.)
                    .AllowAnyHeader(); // Permite cualquier encabezado
         });
 });
@@ -21,8 +21,19 @@ builder.Services.AddCors(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// En Program.cs de tu API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
-// Acceso a configuración
+
+// Acceso a configuraciï¿½n
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 // Registramos los servicios personalizados
@@ -41,7 +52,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Aplicar la política de CORS
+// Aplicar la polï¿½tica de CORS
 app.UseCors("AllowAllOrigins");
 
 app.UseAuthorization();
@@ -49,3 +60,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+app.MapControllers();

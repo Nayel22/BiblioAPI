@@ -23,11 +23,33 @@ namespace BiblioAPI.Controllers
             return Ok(prestamos);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> RegistrarPrestamo([FromBody] Prestamo prestamo)
+        [HttpPost]  
+        public async Task<IActionResult> RegistrarPrestamo([FromBody] Prestamo prestamo)
         {
-            await _prestamoService.RegistrarPrestamoAsync(prestamo);
-            return CreatedAtAction(nameof(ObtenerPrestamos), new { id = prestamo.Id }, prestamo);
+            if (prestamo.FechaPrestamo == default)
+            {
+                return BadRequest("La fecha del préstamo no puede estar vacía.");
+            }
+
+            if (prestamo.FechaDevolucionEsperada < DateTime.Today)
+            {
+                return BadRequest("La fecha de devolución esperada debe ser válida.");
+            }
+
+            try
+            {
+                await _prestamoService.RegistrarPrestamoAsync(prestamo);
+                return Ok(new { mensaje = "Préstamo registrado correctamente" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message  }); 
+            }
+            catch (Exception ex)
+            {
+                // Error inesperado
+                return StatusCode(500, new { error = "Error interno al registrar el préstamo.", detalle = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]

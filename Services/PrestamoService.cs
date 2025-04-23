@@ -100,8 +100,81 @@ namespace BiblioAPI.Services
             }
         }
 
+        public async Task<List<Prestamo>> ObtenerPrestamosPendientesPorCorreoAsync(string correo)
+        {
+            var prestamos = new List<Prestamo>();
 
- 
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("ObtenerPrestamosPendientesPorCorreo", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Correo", correo);
+
+                    await con.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            prestamos.Add(new Prestamo
+                            {
+                                Id = (int)reader["Id"],
+                                IdUsuario = (int)reader["IdUsuario"],
+                                IdLibro = (int)reader["IdLibro"],
+                                FechaPrestamo = (DateTime)reader["FechaPrestamo"],
+                                FechaDevolucionEsperada = (DateTime)reader["FechaDevolucionEsperada"],
+                                FechaDevolucionReal = reader["FechaDevolucionReal"] as DateTime?,
+                                Estado = reader["Estado"].ToString()
+                               
+                            });
+                        }
+                    }
+                }
+            }
+
+            return prestamos;
+        }
+
+       
+        public async Task<bool> MarcarComoDevueltoAsync(int idPrestamo)
+        {
+            using (SqlConnection con = new SqlConnection(_connectionString))
+            {
+                await con.OpenAsync();
+
+                using (SqlTransaction transaction = con.BeginTransaction())
+                {
+                    try
+                    {
+                        // Marcar préstamo como devuelto
+                        var cmd = new SqlCommand("MarcarPrestamoComoDevuelto", con, transaction)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmd.Parameters.AddWithValue("@Id", idPrestamo);
+                        await cmd.ExecuteNonQueryAsync();
+
+                        // Aumentar existencias del libro
+                        var cmdStock = new SqlCommand("AumentarStockPorPrestamo", con, transaction)
+                        {
+                            CommandType = CommandType.StoredProcedure
+                        };
+                        cmdStock.Parameters.AddWithValue("@IdPrestamo", idPrestamo);
+                        await cmdStock.ExecuteNonQueryAsync();
+
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+            }
+        }
+
 
         public async Task<bool> EliminarPrestamoAsync(int id)
         {

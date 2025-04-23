@@ -162,3 +162,80 @@ DELETE FROM Prestamos WHERE Id = @Id;
 END;
 GO
 
+CREATE PROCEDURE ObtenerPrestamosPendientesPorCorreo
+    @Correo NVARCHAR(100)
+AS
+BEGIN
+SELECT p.*
+FROM Prestamos p
+         INNER JOIN Usuarios u ON u.Id = p.IdUsuario
+WHERE u.Correo = @Correo AND p.Estado = 'Activo'
+END
+CREATE PROCEDURE AumentarStockPorPrestamo
+    @IdPrestamo INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IdLibro INT;
+
+SELECT @IdLibro = IdLibro
+FROM Prestamos
+WHERE Id = @IdPrestamo;
+
+IF @IdLibro IS NULL
+BEGIN
+        RAISERROR('No se encontró el préstamo especificado.', 16, 1);
+        RETURN;
+END
+
+UPDATE Libros
+SET Existencias = Existencias + 1
+WHERE Id = @IdLibro;
+END
+CREATE PROCEDURE MarcarPrestamoComoDevuelto
+    @Id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+UPDATE Prestamos
+SET Estado = 'Devuelto',
+    FechaDevolucionReal = GETDATE()
+WHERE Id = @Id AND Estado = 'Activo';
+
+-- Verifica si se actualizó algo
+IF @@ROWCOUNT = 0
+BEGIN
+        RAISERROR('No se encontró un préstamo activo con ese ID.', 16, 1);
+        RETURN;
+END
+CREATE PROCEDURE MarcarPrestamoComoDevuelto
+    @Id INT
+AS
+BEGIN
+    -- Solo actualiza si el préstamo está activo
+UPDATE Prestamos
+SET FechaDevolucionReal = GETDATE(),
+    Estado = 'Devuelto'
+WHERE Id = @Id AND Estado = 'Activo';
+
+-- Retornar cuántas filas se afectaron (opcional para debugging)
+SELECT @@ROWCOUNT AS FilasAfectadas;
+END
+CREATE PROCEDURE AumentarStockPorPrestamo
+    @IdPrestamo INT
+AS
+BEGIN
+    DECLARE @IdLibro INT;
+
+SELECT @IdLibro = IdLibro FROM Prestamos WHERE Id = @IdPrestamo;
+
+IF @IdLibro IS NOT NULL
+BEGIN
+UPDATE Libros
+SET Existencias = Existencias + 1
+WHERE Id = @IdLibro;
+END
+END
+

@@ -73,5 +73,24 @@ namespace BiblioAPI.Controllers
             }
             return NoContent();
         }
+        [HttpGet("pendientes")]
+        public async Task<ActionResult<List<Prestamo>>> ObtenerPrestamosPendientes(string correo)
+        {
+            var prestamos = await _prestamoService.ObtenerPrestamosPendientesPorCorreoAsync(correo);
+            return Ok(prestamos);
+        }
+
+        [HttpPut("devolver/{id}")]
+        public async Task<IActionResult> MarcarComoDevuelto(int id)
+        {
+            var exito = await _prestamoService.MarcarComoDevueltoAsync(id);
+            if (!exito)
+            {
+                return BadRequest(new { error = "No se pudo marcar el préstamo como devuelto. Verifique si ya fue devuelto o si el ID es inválido." });
+            }
+
+            return Ok(new { mensaje = "Libro devuelto correctamente." });
+        }
+
     }
 }

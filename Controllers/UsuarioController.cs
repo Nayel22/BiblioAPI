@@ -55,7 +55,20 @@ namespace BiblioAPI.Controllers
             }
         }
         
-        
+        [HttpGet("tipo")]
+        public async Task<ActionResult<string>> ObtenerTipoUsuario([FromQuery] string correo)
+        {
+            if (string.IsNullOrEmpty(correo))
+                return BadRequest("Correo requerido.");
+
+            var tipo = await _usuarioService.ObtenerTipoUsuarioAsync(correo);
+
+            if (string.IsNullOrEmpty(tipo))
+                return NotFound("No se encontró el tipo de usuario para el correo proporcionado.");
+
+            return Ok(tipo); // Esto devuelve algo como "Admin" o "Cliente"
+        }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> ActualizarUsuario(int id, [FromBody] Usuario usuario)

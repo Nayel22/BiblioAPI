@@ -45,6 +45,19 @@ namespace BiblioAPI.Services
 
             return usuarios;
         }
+        public async Task<string> ObtenerTipoUsuarioAsync(string correo)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("ObtenerTipoUsuarioPorCorreo", con)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@Correo", correo);
+
+            await con.OpenAsync();
+            var result = await cmd.ExecuteScalarAsync();
+            return result?.ToString() ?? "Cliente"; // valor por defecto si no encuentra
+        }
 
         public async Task<Usuario> ObtenerUsuarioPorIdAsync(int id)
         {

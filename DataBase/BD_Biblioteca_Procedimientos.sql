@@ -237,5 +237,15 @@ UPDATE Libros
 SET Existencias = Existencias + 1
 WHERE Id = @IdLibro;
 END
-END
 
+
+CREATE PROCEDURE ObtenerTipoUsuarioPorCorreo
+    @Correo NVARCHAR(150)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+SELECT TipoUsuario
+FROM Usuarios
+WHERE Correo = @Correo;
+END

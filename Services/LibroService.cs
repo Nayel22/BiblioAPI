@@ -101,7 +101,7 @@ namespace BiblioAPI.Services
                     cmd.Parameters.AddWithValue("@Anio", libro.Anio);
                     cmd.Parameters.AddWithValue("@Categoria", libro.Categoria);
                     cmd.Parameters.AddWithValue("@Existencias", libro.Existencias);
-                    cmd.Parameters.AddWithValue("@ImagenURL", libro.Existencias);
+                    cmd.Parameters.AddWithValue("@ImagenURL", libro.ImagenURL);
                
 
                     await con.OpenAsync();
@@ -125,7 +125,7 @@ namespace BiblioAPI.Services
                     cmd.Parameters.AddWithValue("@Anio", libro.Anio);
                     cmd.Parameters.AddWithValue("@Categoria", libro.Categoria);
                     cmd.Parameters.AddWithValue("@Existencias", libro.Existencias);
-                    cmd.Parameters.AddWithValue("@ImagenURL", libro.Existencias);
+                    cmd.Parameters.AddWithValue("@ImagenURL", libro.ImagenURL);
 
                     await con.OpenAsync();
                     int rows = await cmd.ExecuteNonQueryAsync();

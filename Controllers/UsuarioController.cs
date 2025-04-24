@@ -102,6 +102,13 @@ namespace BiblioAPI.Controllers
             }
             return Ok(usuario); // Retorna el usuario si la validación es exitosa
         }
+        [HttpGet("por-correo")]
+        public async Task<ActionResult<List<Usuario>>> ObtenerUsuariosPorCorreo([FromQuery] string correo)
+        {
+            var usuarios = await _usuarioService.ObtenerUsuariosPorCorreoAsync(correo);
+            return Ok(usuarios);
+        }
+
           
     }
 }

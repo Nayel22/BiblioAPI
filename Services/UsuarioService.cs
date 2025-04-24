@@ -187,6 +187,37 @@ namespace BiblioAPI.Services
             } 
             return usuario; // Retorna null si no se encuentra el usuario
         } 
+        public async Task<List<Usuario>> ObtenerUsuariosPorCorreoAsync(string correo)
+        {
+            var lista = new List<Usuario>();
+
+            using (var con = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand("SELECT * FROM Usuarios WHERE Correo = @Correo", con))
+            {
+                cmd.Parameters.AddWithValue("@Correo", correo);
+                await con.OpenAsync();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        lista.Add(new Usuario
+                        {
+                            Id = (int)reader["Id"],
+                            Nombre = reader["Nombre"].ToString(),
+                            Apellido = reader["Apellido"].ToString(),
+                            Correo = reader["Correo"].ToString(),
+                            Telefono = reader["Telefono"].ToString(),
+                            Clave = reader["Clave"].ToString(),
+                            TipoUsuario = reader["TipoUsuario"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
+        }
+
 
     }
 }
